@@ -10,6 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using PetClinicWebApi.Model;
+using PetClinicWebApi.Services;
 
 namespace PetClinicWebApi
 {
@@ -25,6 +28,12 @@ namespace PetClinicWebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<PetClinicDatabaseSettings>(
+       Configuration.GetSection(nameof(PetClinicDatabaseSettings)));
+
+            services.AddSingleton<IPetClinicDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<PetClinicDatabaseSettings>>().Value);
+            services.AddSingleton<PetService>();
             services.AddControllers();
         }
 
