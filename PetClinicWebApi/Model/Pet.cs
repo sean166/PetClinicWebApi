@@ -18,6 +18,7 @@ namespace PetClinicWebApi.Model
         public string PetDesc { get; set; }
         public double Weight { get; set; }
         public double Age { get; set; }
-        
+        public string PetOwner { get; set; }
+
     }
 }
