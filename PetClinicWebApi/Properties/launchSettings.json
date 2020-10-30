@@ -20,7 +20,7 @@
     "PetClinicWebApi": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/pets",
+      "launchUrl": "api/v1/users/userdata",
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
