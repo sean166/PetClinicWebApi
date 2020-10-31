@@ -14,9 +14,11 @@ using PetClinicWebApi.Model.Identity;
 using PetClinicWebApi.Helper;
 using PetClinicWebApi.Services;
 using PetClinicWebApi.Model;
+using Microsoft.AspNetCore.Cors;
 
 namespace PetClinicWebApi.Controllers
 {
+   
     [Route("api/v1/[controller]/[action]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -53,11 +55,17 @@ namespace PetClinicWebApi.Controllers
         public async Task<ActionResult> FindByEmail(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
-            var userData = new UserDataResponse
+            var userData = new ApplicationUser
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Email = user.Email
+                Email = user.Email,
+                PetName = user.PetName,
+                Address = user.Address,
+                Age = user.Age,
+                Gender = user.Gender
+
+
             };
             return Ok(userData);
         }
