@@ -49,6 +49,18 @@ namespace PetClinicWebApi.Controllers
             };
             return Ok(userData);
         }
+        [HttpGet]
+        public async Task<ActionResult> FindByEmail(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            var userData = new UserDataResponse
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email
+            };
+            return Ok(userData);
+        }
 
         // POST api/user/register
         [HttpPost]

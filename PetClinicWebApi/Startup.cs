@@ -25,6 +25,7 @@ namespace PetClinicWebApi
 {
     public class Startup
     {
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -34,7 +35,9 @@ namespace PetClinicWebApi
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-       {            services.Configure<PetClinicDatabaseSettings>(
+       {           
+
+            services.Configure<PetClinicDatabaseSettings>(
        Configuration.GetSection(nameof(PetClinicDatabaseSettings)));
            services.AddSingleton<IPetClinicDatabaseSettings>(sp =>
                sp.GetRequiredService<IOptions<PetClinicDatabaseSettings>>().Value);

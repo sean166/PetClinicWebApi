@@ -43,7 +43,6 @@ namespace PetClinicWebApi.Model.Entity
 
         public string LastName { get; set; }
 
-
         public string Email { get; set; }
     }
 }
