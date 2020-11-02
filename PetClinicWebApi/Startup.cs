@@ -38,15 +38,14 @@ namespace PetClinicWebApi
        {
             services.AddCors(options =>
             {
-                options.AddPolicy(name: MyAllowSpecificOrigins,
-                    builder =>
-                    {
-                        builder.WithOrigins(
-                            "https://localhost:44398",
-                            "http://localhost:4200/")
-                                .WithMethods("PUT", "DELETE", "GET");
-                    });
+                options.AddPolicy(
+                  "CorsPolicy",
+                  builder => builder.WithOrigins("http://localhost:4200")
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials());
             });
+
             services.Configure<PetClinicDatabaseSettings>(
        Configuration.GetSection(nameof(PetClinicDatabaseSettings)));
            services.AddSingleton<IPetClinicDatabaseSettings>(sp =>
@@ -112,7 +111,7 @@ namespace PetClinicWebApi
 
             app.UseRouting();
 
-            app.UseCors(MyAllowSpecificOrigins);
+            app.UseCors("CorsPolicy");
 
             app.UseAuthorization();
 
