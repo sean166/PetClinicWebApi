@@ -15,6 +15,7 @@ using PetClinicWebApi.Helper;
 using PetClinicWebApi.Services;
 using PetClinicWebApi.Model;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.EntityFrameworkCore;
 
 namespace PetClinicWebApi.Controllers
 {
@@ -65,6 +66,22 @@ namespace PetClinicWebApi.Controllers
                 Age = user.Age,
                 Gender = user.Gender
 
+            };
+            return Ok(userData);
+        }
+        [HttpGet]
+        public async Task<ActionResult> AfterUserLogin()
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var userData = new ApplicationUser
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                PetName = user.PetName,
+                Address = user.Address,
+                Age = user.Age,
+                Gender = user.Gender
 
             };
             return Ok(userData);
@@ -115,5 +132,96 @@ namespace PetClinicWebApi.Controllers
             string errorMessage = string.Join(", ", ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage));
             return BadRequest(errorMessage ?? "Bad Request");
         }
+
+        [HttpGet]
+        public ActionResult GetUserList()
+        {
+            var user =  _userManager.Users.ToList();
+            return Ok(user);
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult> DeleteUser(string email)
+        {
+            if(email != null)
+            {
+                try
+                {
+                    var user = await _userManager.FindByEmailAsync(email);
+                    await _userManager.DeleteAsync(user);
+                    return Ok();
+
+                }
+                catch(Exception ex)
+                {
+
+                }
+            }
+            return NotFound();
+            
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> UpdateUserInfo(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if(user != null)
+            {
+                var model = new EditUserModel()
+                {
+                    UserId = user.Id.ToString(),
+                    Address = user.Address,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Age = user.Age,
+                    PetName = user.PetName,
+                    Gender = user.Gender,
+                    ContactPhone = user.ContactPhone
+                    
+
+                };
+                return Ok(model);
+            }
+            return NotFound();
+        }
+        [HttpPost]
+        public async Task<ActionResult> UpdateUserInfo(EditUserModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByIdAsync(model.UserId);
+                try
+                {
+                    user.Address = model.Address;
+                    user.FirstName = model.FirstName;
+                    user.LastName = model.LastName;
+                    user.PetName = model.PetName;
+                    user.Age = model.Age;
+                    user.ContactPhone = model.ContactPhone;
+                    await _userManager.UpdateAsync(user);
+                    return Ok();
+                }
+                catch
+                {
+
+                }
+            }
+            return Ok();
+        }
+
+        //[HttpPost]
+        ////FOR TEST SHOULD NOT BE ANONYMOUS
+        //[AllowAnonymous]
+        //public async Task<ActionResult> CreateUserRole(UserRoleModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var userRole = new ApplicationRole()
+        //        {
+        //            Name=
+        //        }
+        //    }
+        //}
+
     }
 }

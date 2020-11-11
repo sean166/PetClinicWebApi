@@ -1,14 +1,15 @@
-﻿using AspNetCore.Identity.Mongo.Model;
+﻿using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PetClinicWebApi.Model.Identity
+namespace PetClinicWebApi.Model.Entity
 {
-    public class ApplicationUser:MongoUser
+    public class EditUserModel
     {
-       
+        [BsonId]
+        public string UserId { get; set; }
         public string LastName { get; set; }
         public string FirstName { get; set; }
         public string Gender { get; set; }
@@ -16,7 +17,5 @@ namespace PetClinicWebApi.Model.Identity
         public string PetName { get; set; }
         public int Age { get; set; }
         public long ContactPhone { get; set; }
-
-
     }
 }
