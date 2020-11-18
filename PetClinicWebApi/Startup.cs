@@ -51,7 +51,8 @@ namespace PetClinicWebApi
            services.AddSingleton<IPetClinicDatabaseSettings>(sp =>
                sp.GetRequiredService<IOptions<PetClinicDatabaseSettings>>().Value);
             services.AddSingleton<PetService>();
-
+            services.AddScoped<QAService>();
+            services.AddScoped<MessageBoardService>();
             services.AddIdentityMongoDbProvider<ApplicationUser, ApplicationRole>
                 (options =>
            {
