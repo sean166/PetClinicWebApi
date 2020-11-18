@@ -141,22 +141,25 @@ namespace PetClinicWebApi.Controllers
         }
 
         [HttpDelete]
-        public async Task<ActionResult> DeleteUser(string email)
+        public async Task<ActionResult> DeleteUser(int index)
         {
-            if(email != null)
-            {
                 try
                 {
-                    var user = await _userManager.FindByEmailAsync(email);
+                    var userList =  _userManager.Users.ToList();
+                    var user = userList[index];
+                if(user != null)
+                {
                     await _userManager.DeleteAsync(user);
                     return Ok();
+                }
+                    
 
                 }
                 catch(Exception ex)
                 {
 
                 }
-            }
+            
             return NotFound();
             
         }
