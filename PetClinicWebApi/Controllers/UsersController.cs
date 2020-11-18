@@ -28,12 +28,15 @@ namespace PetClinicWebApi.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly PetService _petService;
-        public UsersController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IConfiguration configuration, PetService petService)
+        private readonly RoleManager<ApplicationRole> _roleManager;
+        public UsersController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager,
+            IConfiguration configuration, PetService petService, RoleManager<ApplicationRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _petService = petService;
+            _roleManager = roleManager;
         }
         //[HttpGet]
         //public ActionResult<List<Pet>> Get() =>
@@ -95,6 +98,7 @@ namespace PetClinicWebApi.Controllers
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { FirstName = model.FirstName, LastName = model.LastName, UserName = model.Email, Email = model.Email };
+                user.Roles.Add("NormalUser");
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -209,6 +213,88 @@ namespace PetClinicWebApi.Controllers
 
                 }
             }
+            return Ok();
+        }
+        public async Task<ActionResult> ManageUserRole(int index)
+        {
+            var userList = _userManager.Users.ToList();
+            
+            var roles = _roleManager.Roles.ToList();
+            var users = _userManager.Users.ToList();
+            if(roles == null)
+            {
+                
+                
+                    return NotFound();
+                
+            }
+
+            var role = roles[index];
+            var model = new List<UserRoleModel>();
+            foreach (var user in users)
+            {
+                var userRole = new UserRoleModel
+                {
+                    UserId = user.Id.ToString(),
+                    UserName = user.UserName
+                };
+                if (await _userManager.IsInRoleAsync(user, role.Name))
+                {
+                    userRole.IsSelected = true;
+                }
+                else
+                {
+                    userRole.IsSelected = false;
+                }
+                model.Add(userRole);
+            }
+            return Ok(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> EditUserRole(int index, List<UserRoleModel> model)
+        {
+           // var userList = _userManager.Users.ToList();
+            var roles =  _roleManager.Roles.ToList();
+            //var users = await _userManager.Users.ToListAsync();
+            var role = roles[index];
+            if (role == null)
+            {
+               
+                return NotFound();
+            }
+            for(int i=0; i<model.Count; i++)
+            {
+                var user = await _userManager.FindByIdAsync(model[i].UserId);
+                IdentityResult result = null;
+                if (model[i].IsSelected && !(await _userManager.IsInRoleAsync(user, role.Name)))
+                {
+                    result = await _userManager.AddToRoleAsync(user, role.Name);
+                }
+                else if (!model[i].IsSelected && await _userManager.IsInRoleAsync(user, role.Name))
+                {
+                    result = await _userManager.RemoveFromRoleAsync(user, role.Name);
+                }
+                else
+                {
+                    continue;
+                }
+                if (result.Succeeded)
+                {
+                    if (i < (model.Count - 1))
+                        continue;
+                }
+            }
+            return Ok();
+        }
+        //Testing purpose
+        [HttpPost]
+        public async Task<IActionResult> CreatRole()
+        {
+            var role = new ApplicationRole
+            {
+                Name = "Doctor"
+            };
+            await _roleManager.CreateAsync(role);
             return Ok();
         }
         //adsadasdadada

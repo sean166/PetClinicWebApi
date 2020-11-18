@@ -16,6 +16,7 @@ namespace PetClinicWebApi.Model.Identity
         public string PetName { get; set; }
         public int Age { get; set; }
         public long ContactPhone { get; set; }
+        
 
 
     }
