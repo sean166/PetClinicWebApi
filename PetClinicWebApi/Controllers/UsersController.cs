@@ -98,10 +98,12 @@ namespace PetClinicWebApi.Controllers
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { FirstName = model.FirstName, LastName = model.LastName, UserName = model.Email, Email = model.Email };
-                user.Roles.Add("NormalUser");
+                user.Roles.Add("5fb57ed576596a7d5118b946");
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    
+                    //var test = await _userManager.IsInRoleAsync(user, "NormalUser");
                     await _signInManager.SignInAsync(user, false);
                     var token = AuthenticationHelper.GenerateJwtToken(model.Email, user, _configuration);
 
