@@ -198,9 +198,10 @@ namespace PetClinicWebApi.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByIdAsync(model.UserId);
+                var user = await _userManager.FindByEmailAsync(model.Email);
                 try
                 {
+                    user.Gender = model.Gender;
                     user.Address = model.Address;
                     user.FirstName = model.FirstName;
                     user.LastName = model.LastName;
