@@ -14,9 +14,11 @@ namespace PetClinicWebApi.Controllers
     public class MessageBoardsController : ControllerBase
     {
         private readonly QAService _qAService;
-        public MessageBoardsController(QAService qAService)
+        private readonly MessageBoardService _messageBoardService;
+        public MessageBoardsController(QAService qAService, MessageBoardService messageBoardService)
         {
             _qAService = qAService;
+            _messageBoardService = messageBoardService;
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<QA>>> GetAllQA()
@@ -54,5 +56,15 @@ namespace PetClinicWebApi.Controllers
             await _qAService.DeleteAsync(qA.QAId);
             return NoContent();
         }
+
+        public async Task<IActionResult> CreateMessage(MessageBoard message)
+        {
+            message.CreatedTime = DateTime.Now.Date;
+            message.UserName = HttpContext.User.Identity.Name;
+            await _messageBoardService.CreateAsync(message);
+            return Ok(message);
+        }
+        
+        
     }
 }

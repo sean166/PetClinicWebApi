@@ -15,6 +15,7 @@ namespace PetClinicWebApi.Model
         public string Topic { get; set; }
         public string Content { get; set; }
         public string UserName { get; set; }
+        public int Likes { get; set; }
         public DateTime CreatedTime { get; set; }
         public List<string> RepliedMessages { get; set; }
         public IEnumerable<MessageBoard> MessageBoards { get; set; }
