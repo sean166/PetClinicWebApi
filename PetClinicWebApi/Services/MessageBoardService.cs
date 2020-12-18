@@ -22,6 +22,10 @@ namespace PetClinicWebApi.Services
         {
             return await _messageBoard.Find(q => true).ToListAsync();
         }
+        public async Task<MessageBoard> GetMessage(string id)
+        {
+            return  await _messageBoard.Find(m => m.MessageBoardId == id).FirstOrDefaultAsync();
+        }
         public async Task<MessageBoard> CreateAsync(MessageBoard message)
         {
             await _messageBoard.InsertOneAsync(message);

@@ -65,6 +65,61 @@ namespace PetClinicWebApi.Controllers
             return Ok(message);
         }
         
+        public async Task<IActionResult> AddComment(MessageBoard comment, string Qid)
+        {
+            if (ModelState.IsValid == true)
+            {
+                comment.CreatedTime = DateTime.Now.Date;
+                await _messageBoardService.CreateAsync(comment);
+
+                var question = await _messageBoardService.GetMessage(Qid);
+                var a = question.RepliedMessages;
+                a = (List<string>)a.Append(comment.MessageBoardId.ToString());
+                question.RepliedMessages = a;
+                await _messageBoardService.UpdateAsync(question.MessageBoardId, question);
+                return Ok(comment);
+            }
+            string errorMessage = string.Join(", ", ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage));
+            return BadRequest(errorMessage ?? "Bad Request");
+
+
+        }
+        public async Task<IActionResult> UpdateLikes(string id, bool tag)
+        {
+            var message = await _messageBoardService.GetMessage(id);
+            if (tag == true)
+            {
+                message.Likes += 1;
+                await _messageBoardService.UpdateAsync(id, message);
+            }
+            return Ok(message);
+        }
+        public async Task<IActionResult> ListAllMessages()
+        {
+            //github is a trash
+            var messageList = await _messageBoardService.GetAll();
+            return Ok(messageList);
+        }
+
+        //public async Task<MessageBoard> DisplayAllAsync(MessageBoard m)
+        //{
+        //    var messageList = new List<MessageBoard>();
+
+        //    if (m.RepliedMessages != null)
+        //    {
+        //        foreach (var r in m.RepliedMessages)
+        //        {
+        //            var reply = await _messageBoardService.GetMessage(r);
+
+
+        //        }
+        //    }
+
+        
+        //}
+           
+          
+        
         
     }
 }
